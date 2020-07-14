@@ -13,12 +13,16 @@ let scale = UIScreen.main.bounds.width / 414
 
 struct ContentView : View {
 
-    @State private var brain: CalculatorBrain = .left("0")
+//    @State private var brain: CalculatorBrain = .left("0")
+    @ObservedObject var model = CalculatorModel()
     
     var body: some View {
         VStack(spacing: 12) {
             Spacer()
-            Text(brain.output)
+            Button("操作记录:\(model.history.count)") {
+                print(self.model.history)
+            }
+            Text(model.brain.output)
                 .font(.system(size: 76))
                 .minimumScaleFactor(0.5)
                 .padding(.trailing, 24 * scale)
@@ -26,10 +30,7 @@ struct ContentView : View {
                     minWidth: 0,
                     maxWidth: .infinity,
                     alignment: .trailing)
-            Button("Text") {
-                self.brain = .left("1.23")
-            }
-            CalculatorButtonPad(brain: $brain)
+            CalculatorButtonPad(model: self.model)
                 .padding(.bottom)
         }
     }
@@ -41,6 +42,51 @@ struct ContentView_Previews : PreviewProvider {
             ContentView()
 //            ContentView().previewDevice("iPhone 8")
 //            ContentView().previewDevice("iPad Air 2")
+        }
+    }
+}
+struct CalculatorButtonPad: View {
+    
+//    @Binding var brain: CalculatorBrain
+    var model: CalculatorModel
+    
+    let pad: [[CalculatorButtonItem]] = [
+        [.command(.clear), .command(.flip),
+         .command(.percent), .op(.divide)],
+        [.digit(7), .digit(8), .digit(9), .op(.multiply)],
+        [.digit(4), .digit(5), .digit(6), .op(.minus)],
+        [.digit(1), .digit(2), .digit(3), .op(.plus)],
+        [.digit(0), .dot, .op(.equal)]
+    ]
+
+    var body: some View {
+        VStack(spacing: 8) {
+            ForEach(pad, id: \.self) { row in
+                CalculatorButtonRow(model: self.model, row: row)
+            }
+        }
+    }
+}
+
+struct CalculatorButtonRow : View {
+    
+//    @Binding var brain: CalculatorBrain
+    var model: CalculatorModel
+    
+    let row: [CalculatorButtonItem]
+    var body: some View {
+        HStack {
+            ForEach(row, id: \.self) { item in
+                CalculatorButton(
+                    title: item.title,
+                    size: item.size,
+                    backgroundColorName: item.backgroundColorName,
+                    foregroundColor: item.foregroundColor)
+                {
+//                    self.brain = self.brain.apply(item: item)
+                    self.model.applay(item)
+                }
+            }
         }
     }
 }
@@ -66,44 +112,6 @@ struct CalculatorButton : View {
     }
 }
 
-struct CalculatorButtonRow : View {
-    @Binding var brain: CalculatorBrain
-    
-    let row: [CalculatorButtonItem]
-    var body: some View {
-        HStack {
-            ForEach(row, id: \.self) { item in
-                CalculatorButton(
-                    title: item.title,
-                    size: item.size,
-                    backgroundColorName: item.backgroundColorName,
-                    foregroundColor: item.foregroundColor)
-                {
-//                    print("Button: \(item.title)")
-                    self.brain = self.brain.apply(item: item)
-                }
-            }
-        }
-    }
-}
 
-struct CalculatorButtonPad: View {
-    @Binding var brain: CalculatorBrain
-    
-    let pad: [[CalculatorButtonItem]] = [
-        [.command(.clear), .command(.flip),
-         .command(.percent), .op(.divide)],
-        [.digit(7), .digit(8), .digit(9), .op(.multiply)],
-        [.digit(4), .digit(5), .digit(6), .op(.minus)],
-        [.digit(1), .digit(2), .digit(3), .op(.plus)],
-        [.digit(0), .dot, .op(.equal)]
-    ]
 
-    var body: some View {
-        VStack(spacing: 8) {
-            ForEach(pad, id: \.self) { row in
-                CalculatorButtonRow(brain: self.$brain, row: row)
-            }
-        }
-    }
-}
+
