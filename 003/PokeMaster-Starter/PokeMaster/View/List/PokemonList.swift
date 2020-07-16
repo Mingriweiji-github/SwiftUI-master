@@ -39,8 +39,13 @@ struct PokemonList: View {
                             self.expendingIndex = pokmon.id
                         }
                     }
-                }
+                } // onTapGesture
             }
-        }
+        }.overlay(
+            VStack{
+                Spacer()
+                PokemonInfoPannel(model: .sample(id: 1))
+            }.edgesIgnoringSafeArea(.bottom)
+        )
     }
 }
