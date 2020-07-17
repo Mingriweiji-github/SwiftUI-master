@@ -3,5 +3,6 @@
     <pages>
         <page name='Basic'/>
         <page name='Sequence'/>
+        <page name='Failure'/>
     </pages>
 </playground>
