@@ -4,5 +4,8 @@
         <page name='Basic'/>
         <page name='Sequence'/>
         <page name='Failure'/>
+        <page name='Subject-01'/>
+        <page name='Subject-02'/>
+        <page name='Zip'/>
     </pages>
 </playground>
